@@ -266,7 +266,22 @@
 
         showLog(`Đang kết nối tới ${bleDevice.name || 'HUD'}...`, '#60A5FA');
         
-        bleServer = await bleDevice.gatt.connect();
+        let retries = 3;
+        while (retries > 0) {
+          try {
+            bleServer = await bleDevice.gatt.connect();
+            break; // Kết nối thành công thì thoát loop
+          } catch (e) {
+            retries--;
+            if (retries === 0) throw e;
+            showLog(`Lỗi kết nối. Đang thử lại... (${retries} lần nữa)`, '#FBBF24');
+            await new Promise(r => setTimeout(r, 1000));
+          }
+        }
+
+        // Chờ thêm 500ms để GATT ổn định trên điện thoại
+        await new Promise(r => setTimeout(r, 500));
+
         const service = await bleServer.getPrimaryService(CONFIG_SERVICE_UUID);
         configChar = await service.getCharacteristic(CONFIG_CHAR_UUID);
 
