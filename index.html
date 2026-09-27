@@ -296,8 +296,12 @@
         console.error(error);
         if (error.name === 'NotFoundError') {
           showLog('Bạn đã hủy quét hoặc không tìm thấy thiết bị.', '#94A3B8');
+        } else if (error.name === 'NetworkError') {
+          showLog('Lỗi kết nối (NetworkError): Vui lòng tắt/bật lại Bluetooth trên điện thoại, gỡ ghép nối thiết bị cũ và thử lại!', '#F87171');
+        } else if (error.name === 'SecurityError') {
+          showLog('Lỗi bảo mật: Trình duyệt không có quyền dùng Bluetooth.', '#F87171');
         } else {
-          showLog('Lỗi kết nối: ' + error.message, '#F87171');
+          showLog(`Lỗi [${error.name}]: ${error.message}`, '#F87171');
         }
       }
     });
