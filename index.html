@@ -255,9 +255,10 @@
 
         showLog('Đang mở cửa sổ quét Bluetooth...', '#60A5FA');
 
-        // Bật popup quét của Chrome (Chỉ hiện các thiết bị có service ẩn của mình)
+        // Bật popup quét của Chrome (Hiện tất cả thiết bị để dễ dàng tìm thấy)
         bleDevice = await navigator.bluetooth.requestDevice({
-          filters: [{ services: [CONFIG_SERVICE_UUID] }]
+          acceptAllDevices: true,
+          optionalServices: [CONFIG_SERVICE_UUID]
         });
 
         // Bắt sự kiện ngắt kết nối
