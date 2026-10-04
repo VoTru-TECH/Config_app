@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,13 +22,13 @@
       --glass-border: rgba(255, 255, 255, 0.08);
       --glow: rgba(59, 130, 246, 0.3);
     }
-    
+
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
-    
+
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       background: radial-gradient(circle at top center, #1E1B4B 0%, var(--bg-dark) 100%);
@@ -109,7 +110,8 @@
       letter-spacing: 0.8px;
     }
 
-    select, input[type="text"] {
+    select,
+    input[type="text"] {
       width: 100%;
       padding: 14px 16px;
       background: rgba(15, 23, 42, 0.8);
@@ -131,7 +133,8 @@
       padding-right: 40px;
     }
 
-    select:focus, input:focus {
+    select:focus,
+    input:focus {
       border-color: var(--primary);
       box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
       background: rgba(30, 41, 59, 0.9);
@@ -158,7 +161,7 @@
       box-shadow: 0 8px 20px -6px var(--glow);
       margin-bottom: 20px;
     }
-    
+
     .btn-connect:hover {
       box-shadow: 0 12px 24px -8px rgba(59, 130, 246, 0.5);
       transform: translateY(-2px);
@@ -168,7 +171,7 @@
       background: linear-gradient(135deg, #10B981, #059669);
       box-shadow: 0 8px 20px -6px rgba(16, 185, 129, 0.4);
     }
-    
+
     .btn-save:hover {
       transform: translateY(-2px);
       box-shadow: 0 12px 24px -8px rgba(16, 185, 129, 0.5);
@@ -186,7 +189,10 @@
       display: none;
       animation: fadeIn 0.4s ease-out;
     }
-    .config-section.visible { display: block; }
+
+    .config-section.visible {
+      display: block;
+    }
 
     /* ── OTA SECTION ─────────────────────────────────────────────────────── */
     .ota-section {
@@ -194,7 +200,7 @@
       border-top: 1px solid var(--glass-border);
       padding-top: 24px;
     }
-    
+
     .ota-header {
       display: flex;
       align-items: center;
@@ -251,8 +257,14 @@
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     }
 
-    .tab-content { display: none; }
-    .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
 
     /* Dropzone file picker */
     .file-dropzone {
@@ -297,7 +309,10 @@
       align-items: center;
       justify-content: space-between;
     }
-    .file-info-box.visible { display: flex; }
+
+    .file-info-box.visible {
+      display: flex;
+    }
 
     .file-name {
       font-size: 13px;
@@ -324,6 +339,7 @@
       color: #38BDF8;
       margin-bottom: 14px;
     }
+
     .btn-check:hover {
       background: rgba(56, 189, 248, 0.1);
     }
@@ -376,8 +392,17 @@
       font-weight: 700;
     }
 
-    .ver-date { font-size: 11.5px; color: #64748B; margin-bottom: 8px; }
-    .ver-notes { font-size: 12.5px; color: #CBD5E1; line-height: 1.5; }
+    .ver-date {
+      font-size: 11.5px;
+      color: #64748B;
+      margin-bottom: 8px;
+    }
+
+    .ver-notes {
+      font-size: 12.5px;
+      color: #CBD5E1;
+      line-height: 1.5;
+    }
 
     .btn-flash {
       background: linear-gradient(135deg, #0284C7, #0EA5E9);
@@ -385,11 +410,15 @@
       margin-top: 16px;
       display: none;
     }
+
     .btn-flash:hover {
       box-shadow: 0 12px 28px -8px rgba(14, 165, 233, 0.5);
       transform: translateY(-2px);
     }
-    .btn-flash.visible { display: flex; }
+
+    .btn-flash.visible {
+      display: flex;
+    }
 
     /* Progress and telemetry */
     .progress-wrap {
@@ -400,7 +429,11 @@
       border-radius: 16px;
       border: 1px solid var(--glass-border);
     }
-    .progress-wrap.visible { display: block; animation: fadeIn 0.4s ease; }
+
+    .progress-wrap.visible {
+      display: block;
+      animation: fadeIn 0.4s ease;
+    }
 
     .progress-bar {
       width: 100%;
@@ -423,14 +456,22 @@
     .progress-fill::after {
       content: '';
       position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
       background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
       animation: shimmer 1.5s infinite;
     }
 
     @keyframes shimmer {
-      0% { transform: translateX(-100%); }
-      100% { transform: translateX(100%); }
+      0% {
+        transform: translateX(-100%);
+      }
+
+      100% {
+        transform: translateX(100%);
+      }
     }
 
     .stats-grid {
@@ -472,7 +513,7 @@
       text-align: center;
       display: none;
       padding: 12px;
-      background: rgba(0,0,0,0.25);
+      background: rgba(0, 0, 0, 0.25);
       border-radius: 12px;
       line-height: 1.5;
     }
@@ -485,10 +526,30 @@
       min-height: 20px;
     }
 
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes slideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
   </style>
 </head>
+
 <body>
 
   <div class="container">
@@ -496,14 +557,17 @@
     <p class="subtitle">Quản lý & Cập nhật Firmware Không Dây</p>
 
     <!-- CẢNH BÁO BẢO MẬT NẾU CHẠY FILE:// -->
-    <div id="protocolWarning" style="display:none; margin-bottom: 20px; padding: 14px 16px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.35); border-radius: 16px; font-size: 13px; color: #FCA5A5; line-height: 1.5; text-align: left;">
+    <div id="protocolWarning"
+      style="display:none; margin-bottom: 20px; padding: 14px 16px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.35); border-radius: 16px; font-size: 13px; color: #FCA5A5; line-height: 1.5; text-align: left;">
       <div style="font-weight: 700; color: #EF4444; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
         <span style="font-size: 16px;">⚠️</span> LƯU Ý QUAN TRỌNG: CHƯA BẬT MÔI TRƯỜNG WEB BLUETOOTH
       </div>
-      Trình duyệt <b>chặn kết nối Bluetooth</b> khi mở file trực tiếp dạng <code>file:///...</code> vì chính sách bảo mật.<br><br>
+      Trình duyệt <b>chặn kết nối Bluetooth</b> khi mở file trực tiếp dạng <code>file:///...</code> vì chính sách bảo
+      mật.<br><br>
       👉 <b>Để kết nối được Bluetooth, bạn chỉ cần:</b>
       <div style="margin-top: 6px; padding-left: 8px;">
-        • Mở bằng <b>VS Code</b>: Chuột phải <code>index.html</code> chọn <b>"Open with Live Server"</b> (chạy qua <code>http://127.0.0.1:5500</code>).<br>
+        • Mở bằng <b>VS Code</b>: Chuột phải <code>index.html</code> chọn <b>"Open with Live Server"</b> (chạy qua
+        <code>http://127.0.0.1:5500</code>).<br>
         • Hoặc mở Terminal gõ: <code>python -m http.server 8000</code> rồi vào <code>http://localhost:8000</code>.<br>
         • Hoặc đưa file lên GitHub Pages / Hosting (HTTPS).
       </div>
@@ -579,7 +643,9 @@
       <div class="tab-content" id="contentCloud">
         <div class="form-group">
           <label>URL Manifest (JSON)</label>
-          <input id="otaManifest" type="text" value="https://raw.githubusercontent.com/VoTru-TECH/FOTA_ESP32/main/manifest.json" placeholder="https://raw.githubusercontent.com/...">
+          <input id="otaManifest" type="text"
+            value="https://raw.githubusercontent.com/VoTru-TECH/FOTA_ESP32/main/manifest.json"
+            placeholder="https://raw.githubusercontent.com/...">
         </div>
 
         <button class="btn-check" id="btnCheckVersions">
@@ -625,42 +691,42 @@
 
   <script>
     // ── UUIDs GATT ───────────────────────────────────────────────────────────
-    const CONFIG_SERVICE_UUID   = "4FAFC201-1FB5-459E-8FCC-C5C9C331914B".toLowerCase();
-    const CONFIG_CHAR_UUID      = "4FAFC202-1FB5-459E-8FCC-C5C9C331914B".toLowerCase();
+    const CONFIG_SERVICE_UUID = "4FAFC201-1FB5-459E-8FCC-C5C9C331914B".toLowerCase();
+    const CONFIG_CHAR_UUID = "4FAFC202-1FB5-459E-8FCC-C5C9C331914B".toLowerCase();
     const OTA_CONTROL_CHAR_UUID = "4FAFC203-1FB5-459E-8FCC-C5C9C331914B".toLowerCase();
-    const OTA_DATA_CHAR_UUID    = "4FAFC204-1FB5-459E-8FCC-C5C9C331914B".toLowerCase();
+    const OTA_DATA_CHAR_UUID = "4FAFC204-1FB5-459E-8FCC-C5C9C331914B".toLowerCase();
 
     // ── DOM ELEMENTS ─────────────────────────────────────────────────────────
-    const connectBtn    = document.getElementById('connectBtn');
-    const saveBtn       = document.getElementById('saveBtn');
-    const statusBox     = document.getElementById('statusBox');
+    const connectBtn = document.getElementById('connectBtn');
+    const saveBtn = document.getElementById('saveBtn');
+    const statusBox = document.getElementById('statusBox');
     const configSection = document.getElementById('configSection');
-    const logText       = document.getElementById('log');
-    const appSelect     = document.getElementById('appSelect');
-    const carSelect     = document.getElementById('carSelect');
+    const logText = document.getElementById('log');
+    const appSelect = document.getElementById('appSelect');
+    const carSelect = document.getElementById('carSelect');
 
-    const tabLocal      = document.getElementById('tabLocal');
-    const tabCloud      = document.getElementById('tabCloud');
-    const contentLocal  = document.getElementById('contentLocal');
-    const contentCloud  = document.getElementById('contentCloud');
-    const dropzone      = document.getElementById('dropzone');
-    const fileInput     = document.getElementById('fileInput');
-    const fileInfoBox   = document.getElementById('fileInfoBox');
-    const fileName      = document.getElementById('fileName');
-    const fileSize      = document.getElementById('fileSize');
+    const tabLocal = document.getElementById('tabLocal');
+    const tabCloud = document.getElementById('tabCloud');
+    const contentLocal = document.getElementById('contentLocal');
+    const contentCloud = document.getElementById('contentCloud');
+    const dropzone = document.getElementById('dropzone');
+    const fileInput = document.getElementById('fileInput');
+    const fileInfoBox = document.getElementById('fileInfoBox');
+    const fileName = document.getElementById('fileName');
+    const fileSize = document.getElementById('fileSize');
 
-    const otaManifest   = document.getElementById('otaManifest');
-    const btnCheckVer   = document.getElementById('btnCheckVersions');
-    const versionsList  = document.getElementById('versionsList');
-    const btnFlash      = document.getElementById('btnFlash');
-    const otaStatus     = document.getElementById('otaStatus');
+    const otaManifest = document.getElementById('otaManifest');
+    const btnCheckVer = document.getElementById('btnCheckVersions');
+    const versionsList = document.getElementById('versionsList');
+    const btnFlash = document.getElementById('btnFlash');
+    const otaStatus = document.getElementById('otaStatus');
 
-    const progressWrap  = document.getElementById('progressWrap');
-    const progressFill  = document.getElementById('progressFill');
+    const progressWrap = document.getElementById('progressWrap');
+    const progressFill = document.getElementById('progressFill');
     const progressLabel = document.getElementById('progressLabel');
-    const statPct       = document.getElementById('statPct');
-    const statSpeed     = document.getElementById('statSpeed');
-    const statEta       = document.getElementById('statEta');
+    const statPct = document.getElementById('statPct');
+    const statSpeed = document.getElementById('statSpeed');
+    const statEta = document.getElementById('statEta');
 
     // ── STATE VARIABLES ──────────────────────────────────────────────────────
     let bleDevice = null;
@@ -892,7 +958,7 @@
         }
 
         await new Promise(r => setTimeout(r, 400));
-        
+
         let service = null;
         try {
           service = await bleServer.getPrimaryService(CONFIG_SERVICE_UUID);
@@ -1176,4 +1242,5 @@
     });
   </script>
 </body>
+
 </html>
