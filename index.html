@@ -767,11 +767,9 @@
       setOtaStatus('Đang lấy thông tin phiên bản từ máy chủ...', '#FBBF24');
 
       try {
-        // Gắn cache buster ?t=... và { cache: 'no-store' } để luôn lấy manifest mới nhất từ GitHub
+        // Gắn cache buster ?t=... để ép browser & GitHub tải mới mà KHÔNG kích hoạt CORS preflight OPTIONS
         const cacheBusterUrl = url.includes('?') ? `${url}&t=${Date.now()}` : `${url}?t=${Date.now()}`;
         const r = await fetch(cacheBusterUrl, {
-          cache: 'no-store',
-          headers: { 'Cache-Control': 'no-cache' },
           signal: AbortSignal.timeout(10000)
         });
         if (!r.ok) throw new Error(`HTTP Error ${r.status}`);
@@ -808,7 +806,6 @@
             try {
               const binBusterUrl = v.url.includes('?') ? `${v.url}&t=${Date.now()}` : `${v.url}?t=${Date.now()}`;
               const binResp = await fetch(binBusterUrl, {
-                cache: 'no-store',
                 signal: AbortSignal.timeout(60000)
               });
               if (!binResp.ok) throw new Error(`Tải file thất bại (HTTP ${binResp.status})`);
