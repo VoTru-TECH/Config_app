@@ -641,15 +641,8 @@
 
       <!-- TAB 2: CLOUD MANIFEST -->
       <div class="tab-content" id="contentCloud">
-        <div class="form-group">
-          <label>URL Manifest (JSON)</label>
-          <input id="otaManifest" type="text"
-            value="https://raw.githubusercontent.com/VoTru-TECH/FOTA_ESP32/main/manifest.json"
-            placeholder="https://raw.githubusercontent.com/...">
-        </div>
-
         <button class="btn-check" id="btnCheckVersions">
-          🔍 Kiểm tra danh sách phiên bản
+          🔄 Làm mới danh sách phiên bản từ Server
         </button>
 
         <div id="versionsList" class="versions-list"></div>
@@ -715,7 +708,7 @@
     const fileName = document.getElementById('fileName');
     const fileSize = document.getElementById('fileSize');
 
-    const otaManifest = document.getElementById('otaManifest');
+    const GITHUB_MANIFEST_URL = "https://raw.githubusercontent.com/VoTru-TECH/FOTA_ESP32/main/manifest.json";
     const btnCheckVer = document.getElementById('btnCheckVersions');
     const versionsList = document.getElementById('versionsList');
     const btnFlash = document.getElementById('btnFlash');
@@ -769,6 +762,9 @@
       tabLocal.classList.remove('active');
       contentCloud.classList.add('active');
       contentLocal.classList.remove('active');
+      if (versionsList.children.length === 0) {
+        btnCheckVer.click();
+      }
     });
 
     // ── FILE PICKER (LOCAL .BIN) ─────────────────────────────────────────────
@@ -819,18 +815,14 @@
 
     // ── CLOUD MANIFEST & DOWNLOAD ────────────────────────────────────────────
     btnCheckVer.addEventListener('click', async () => {
-      const url = otaManifest.value.trim();
-      if (!url) {
-        setOtaStatus('Vui lòng nhập URL Manifest!', '#F87171');
-        return;
-      }
+      const url = GITHUB_MANIFEST_URL;
 
       btnCheckVer.disabled = true;
-      btnCheckVer.innerHTML = '⏳ Đang tải danh sách...';
+      btnCheckVer.innerHTML = '⏳ Đang kiểm tra...';
       versionsList.innerHTML = '';
       btnFlash.classList.remove('visible');
       selectedFirmwareBuffer = null;
-      setOtaStatus('Đang lấy thông tin phiên bản từ máy chủ...', '#FBBF24');
+      setOtaStatus('Đang kiểm tra phiên bản mới từ máy chủ...', '#FBBF24');
 
       try {
         // Gắn cache buster ?t=... để ép browser & GitHub tải mới mà KHÔNG kích hoạt CORS preflight OPTIONS
@@ -892,7 +884,7 @@
         setOtaStatus(`❌ Lỗi kết nối Cloud: ${e.message}`, '#F87171');
       } finally {
         btnCheckVer.disabled = false;
-        btnCheckVer.innerHTML = '🔍 Kiểm tra danh sách phiên bản';
+        btnCheckVer.innerHTML = '🔄 Làm mới danh sách phiên bản từ Server';
       }
     });
 
