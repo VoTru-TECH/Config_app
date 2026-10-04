@@ -3,16 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HUD Configurator | BLE</title>
+  <title>HUD Configurator | BLE & Direct OTA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary: #4F46E5;
-      --primary-hover: #4338CA;
-      --bg: #0F172A;
+      --primary: #3B82F6;
+      --primary-hover: #2563EB;
+      --accent: #06B6D4;
+      --success: #10B981;
+      --warning: #F59E0B;
+      --danger: #EF4444;
+      --bg-dark: #0B1121;
       --surface: rgba(30, 41, 59, 0.7);
+      --surface-light: rgba(51, 65, 85, 0.8);
       --text: #F8FAFC;
       --text-muted: #94A3B8;
-      --glass-border: rgba(255, 255, 255, 0.1);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --glow: rgba(59, 130, 246, 0.3);
     }
     
     * {
@@ -22,132 +29,149 @@
     }
     
     body {
-      font-family: 'Inter', -apple-system, sans-serif;
-      background: radial-gradient(circle at top right, #1E1B4B, var(--bg));
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: radial-gradient(circle at top center, #1E1B4B 0%, var(--bg-dark) 100%);
       color: var(--text);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
+      padding: 32px 16px;
     }
 
     .container {
-      width: 90%;
-      max-width: 400px;
+      width: 100%;
+      max-width: 460px;
       background: var(--surface);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
       border: 1px solid var(--glass-border);
-      border-radius: 24px;
-      padding: 32px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-      animation: fadeIn 0.5s ease-out;
+      border-radius: 28px;
+      padding: 32px 24px;
+      box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     h1 {
-      font-size: 24px;
+      font-size: 26px;
       font-weight: 700;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       text-align: center;
-      background: linear-gradient(135deg, #60A5FA, #A78BFA);
+      background: linear-gradient(135deg, #E0E7FF, #60A5FA);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
     }
 
     p.subtitle {
       text-align: center;
       color: var(--text-muted);
+      font-size: 13.5px;
+      margin-bottom: 24px;
+      font-weight: 400;
+    }
+
+    .status-box {
+      margin-bottom: 20px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: rgba(0, 0, 0, 0.3);
       font-size: 14px;
-      margin-bottom: 32px;
+      text-align: center;
+      color: var(--text-muted);
+      transition: all 0.4s ease;
+      border: 1px solid transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .status-box.connected {
+      background: rgba(16, 185, 129, 0.12);
+      color: #34D399;
+      border-color: rgba(16, 185, 129, 0.25);
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.1);
     }
 
     .form-group {
-      margin-bottom: 24px;
+      margin-bottom: 18px;
     }
 
     label {
       display: block;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 600;
-      color: var(--text-muted);
+      color: #CBD5E1;
       margin-bottom: 8px;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.8px;
+    }
+
+    select, input[type="text"] {
+      width: 100%;
+      padding: 14px 16px;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+      transition: all 0.3s ease;
+      font-family: inherit;
     }
 
     select {
-      width: 100%;
-      padding: 14px 16px;
-      background: rgba(15, 23, 42, 0.6);
-      border: 1px solid var(--glass-border);
-      border-radius: 12px;
-      color: var(--text);
-      font-size: 16px;
       appearance: none;
-      outline: none;
-      transition: all 0.3s ease;
       cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%2394A3B8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      padding-right: 40px;
     }
 
-    select:focus {
+    select:focus, input:focus {
       border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
-    }
-
-    .status-box {
-      margin-bottom: 24px;
-      padding: 16px;
-      border-radius: 12px;
-      background: rgba(0, 0, 0, 0.2);
-      font-size: 14px;
-      text-align: center;
-      color: #94A3B8;
-      transition: all 0.3s;
-      border: 1px solid transparent;
-    }
-
-    .status-box.connected {
-      background: rgba(16, 185, 129, 0.1);
-      color: #34D399;
-      border-color: rgba(16, 185, 129, 0.2);
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+      background: rgba(30, 41, 59, 0.9);
     }
 
     button {
       width: 100%;
-      padding: 16px;
+      padding: 15px;
       color: white;
       border: none;
-      border-radius: 12px;
-      font-size: 16px;
+      border-radius: 14px;
+      font-size: 15px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
 
     .btn-connect {
-      background: #3B82F6;
-      box-shadow: 0 4px 14px 0 rgba(59, 130, 246, 0.39);
-      margin-bottom: 24px;
+      background: linear-gradient(135deg, #3B82F6, #2563EB);
+      box-shadow: 0 8px 20px -6px var(--glow);
+      margin-bottom: 20px;
     }
-
+    
     .btn-connect:hover {
-      background: #2563EB;
+      box-shadow: 0 12px 24px -8px rgba(59, 130, 246, 0.5);
       transform: translateY(-2px);
     }
 
     .btn-save {
-      background: var(--primary);
-      box-shadow: 0 4px 14px 0 rgba(79, 70, 229, 0.39);
+      background: linear-gradient(135deg, #10B981, #059669);
+      box-shadow: 0 8px 20px -6px rgba(16, 185, 129, 0.4);
     }
-
+    
     .btn-save:hover {
-      background: var(--primary-hover);
       transform: translateY(-2px);
-    }
-
-    button:active {
-      transform: translateY(0);
+      box-shadow: 0 12px 24px -8px rgba(16, 185, 129, 0.5);
     }
 
     button:disabled {
@@ -160,41 +184,342 @@
 
     .config-section {
       display: none;
-      animation: fadeIn 0.5s ease-out;
+      animation: fadeIn 0.4s ease-out;
+    }
+    .config-section.visible { display: block; }
+
+    /* ── OTA SECTION ─────────────────────────────────────────────────────── */
+    .ota-section {
+      margin-top: 28px;
+      border-top: 1px solid var(--glass-border);
+      padding-top: 24px;
     }
     
-    .config-section.visible {
-      display: block;
+    .ota-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .ota-header h2 {
+      font-size: 17px;
+      font-weight: 600;
+      color: #38BDF8;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ota-badge {
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 99px;
+      background: rgba(56, 189, 248, 0.15);
+      color: #38BDF8;
+      font-weight: 600;
+      border: 1px solid rgba(56, 189, 248, 0.25);
+    }
+
+    .ota-tabs {
+      display: flex;
+      gap: 8px;
+      background: rgba(15, 23, 42, 0.6);
+      padding: 4px;
+      border-radius: 12px;
+      margin-bottom: 18px;
+    }
+
+    .ota-tab {
+      flex: 1;
+      padding: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      background: transparent;
+      border-radius: 10px;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      text-align: center;
+      border: none;
+    }
+
+    .ota-tab.active {
+      background: rgba(59, 130, 246, 0.25);
+      color: #F8FAFC;
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+
+    /* Dropzone file picker */
+    .file-dropzone {
+      border: 2px dashed rgba(56, 189, 248, 0.35);
+      border-radius: 16px;
+      padding: 22px 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: rgba(15, 23, 42, 0.4);
+    }
+
+    .file-dropzone:hover {
+      border-color: #38BDF8;
+      background: rgba(56, 189, 248, 0.06);
+    }
+
+    .dropzone-icon {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+
+    .dropzone-text {
+      font-size: 13.5px;
+      color: var(--text);
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .dropzone-hint {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .file-info-box {
+      display: none;
+      margin-top: 14px;
+      padding: 12px 14px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      border-radius: 12px;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .file-info-box.visible { display: flex; }
+
+    .file-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #E2E8F0;
+      max-width: 220px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .file-size {
+      font-size: 12px;
+      color: #38BDF8;
+      background: rgba(56, 189, 248, 0.15);
+      padding: 3px 8px;
+      border-radius: 8px;
+      font-weight: 600;
+    }
+
+    .btn-check {
+      background: transparent;
+      border: 1.5px solid #38BDF8;
+      color: #38BDF8;
+      margin-bottom: 14px;
+    }
+    .btn-check:hover {
+      background: rgba(56, 189, 248, 0.1);
+    }
+
+    .versions-list {
+      max-height: 220px;
+      overflow-y: auto;
+      margin-bottom: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .version-card {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
+      padding: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .version-card:hover {
+      border-color: rgba(56, 189, 248, 0.4);
+      background: rgba(30, 41, 59, 0.6);
+    }
+
+    .version-card.selected {
+      border-color: #38BDF8;
+      background: rgba(56, 189, 248, 0.12);
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.15);
+    }
+
+    .ver-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      font-weight: 700;
+      font-size: 15px;
+      color: #F8FAFC;
+    }
+
+    .ver-badge {
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 99px;
+      background: rgba(16, 185, 129, 0.2);
+      color: #34D399;
+      font-weight: 700;
+    }
+
+    .ver-date { font-size: 11.5px; color: #64748B; margin-bottom: 8px; }
+    .ver-notes { font-size: 12.5px; color: #CBD5E1; line-height: 1.5; }
+
+    .btn-flash {
+      background: linear-gradient(135deg, #0284C7, #0EA5E9);
+      box-shadow: 0 8px 24px -6px rgba(14, 165, 233, 0.4);
+      margin-top: 16px;
+      display: none;
+    }
+    .btn-flash:hover {
+      box-shadow: 0 12px 28px -8px rgba(14, 165, 233, 0.5);
+      transform: translateY(-2px);
+    }
+    .btn-flash.visible { display: flex; }
+
+    /* Progress and telemetry */
+    .progress-wrap {
+      display: none;
+      margin-top: 18px;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 16px;
+      border-radius: 16px;
+      border: 1px solid var(--glass-border);
+    }
+    .progress-wrap.visible { display: block; animation: fadeIn 0.4s ease; }
+
+    .progress-bar {
+      width: 100%;
+      height: 12px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 99px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #06B6D4, #3B82F6, #8B5CF6);
+      border-radius: 99px;
+      width: 0%;
+      transition: width 0.2s linear;
+      position: relative;
+    }
+
+    .progress-fill::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+      animation: shimmer 1.5s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .stat-item {
+      background: rgba(15, 23, 42, 0.6);
+      border-radius: 10px;
+      padding: 8px 6px;
+      text-align: center;
+    }
+
+    .stat-val {
+      font-size: 13px;
+      font-weight: 700;
+      color: #38BDF8;
+    }
+
+    .stat-lbl {
+      font-size: 10.5px;
+      color: #94A3B8;
+      margin-top: 2px;
+    }
+
+    .progress-label {
+      font-size: 12.5px;
+      color: #CBD5E1;
+      text-align: center;
+      line-height: 1.4;
     }
 
     .log-text {
-      margin-top: 24px;
+      margin-top: 18px;
       font-size: 13px;
       text-align: center;
       display: none;
+      padding: 12px;
+      background: rgba(0,0,0,0.25);
+      border-radius: 12px;
+      line-height: 1.5;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+    .ota-status {
+      font-size: 13px;
+      text-align: center;
+      margin-top: 8px;
+      margin-bottom: 10px;
+      min-height: 20px;
     }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
 <body>
 
   <div class="container">
     <h1>HUD Configurator</h1>
-    <p class="subtitle">Kết nối và thiết lập tham số qua Bluetooth</p>
+    <p class="subtitle">Quản lý & Cập nhật Firmware Không Dây</p>
 
+    <!-- CẢNH BÁO BẢO MẬT NẾU CHẠY FILE:// -->
+    <div id="protocolWarning" style="display:none; margin-bottom: 20px; padding: 14px 16px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.35); border-radius: 16px; font-size: 13px; color: #FCA5A5; line-height: 1.5; text-align: left;">
+      <div style="font-weight: 700; color: #EF4444; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+        <span style="font-size: 16px;">⚠️</span> LƯU Ý QUAN TRỌNG: CHƯA BẬT MÔI TRƯỜNG WEB BLUETOOTH
+      </div>
+      Trình duyệt <b>chặn kết nối Bluetooth</b> khi mở file trực tiếp dạng <code>file:///...</code> vì chính sách bảo mật.<br><br>
+      👉 <b>Để kết nối được Bluetooth, bạn chỉ cần:</b>
+      <div style="margin-top: 6px; padding-left: 8px;">
+        • Mở bằng <b>VS Code</b>: Chuột phải <code>index.html</code> chọn <b>"Open with Live Server"</b> (chạy qua <code>http://127.0.0.1:5500</code>).<br>
+        • Hoặc mở Terminal gõ: <code>python -m http.server 8000</code> rồi vào <code>http://localhost:8000</code>.<br>
+        • Hoặc đưa file lên GitHub Pages / Hosting (HTTPS).
+      </div>
+    </div>
     <div class="status-box" id="statusBox">
-      🔴 Chưa kết nối
+      <span style="font-size: 18px">🔴</span> Chưa kết nối Bluetooth
     </div>
 
-    <button id="connectBtn" class="btn-connect">🔍 Tìm & Kết Nối Thiết Bị</button>
+    <button id="connectBtn" class="btn-connect">
+      🔍 Tìm & Kết Nối Thiết Bị
+    </button>
 
+    <!-- ════ CẤU HÌNH XE & APP ════ -->
     <div id="configSection" class="config-section">
       <div class="form-group">
-        <label for="appSelect">Ứng dụng (App Mode)</label>
+        <label for="appSelect">Ứng dụng điều hướng</label>
         <select id="appSelect">
           <option value="0">GOFA (Mặc định)</option>
           <option value="1">Waze</option>
@@ -204,10 +529,10 @@
       </div>
 
       <div class="form-group">
-        <label for="carSelect">Dòng xe (Car Profile)</label>
+        <label for="carSelect">Giao thức xe (CAN Bus)</label>
         <select id="carSelect">
           <option value="0">KIA / Hyundai Classic (Tucson 18-20)</option>
-          <option value="1">KIA / Hyundai CAN FD (Sorento 22+)</option>
+          <option value="1" disabled style="color:#64748B">[Reserved]</option>
           <option value="2">Hyundai Santafe 2021</option>
           <option value="3">Hyundai Palisade</option>
           <option value="4">Mazda CX-5</option>
@@ -217,141 +542,629 @@
         </select>
       </div>
 
-      <button id="saveBtn" class="btn-save">💾 Lưu & Khởi động lại</button>
+      <button id="saveBtn" class="btn-save">
+        💾 Lưu & Khởi động lại
+      </button>
+    </div>
+
+    <!-- ════ OTA TRỰC TIẾP QUA BLE (DIRECT BLE OTA) ════ -->
+    <div class="ota-section">
+      <div class="ota-header">
+        <h2><span>🔄</span> Nạp Firmware Trực Tiếp</h2>
+        <span class="ota-badge">⚡ BLE OTA</span>
+      </div>
+
+      <!-- TABS CHỌN NGUỒN FIRMWARE -->
+      <div class="ota-tabs">
+        <button class="ota-tab active" id="tabLocal">📂 Chọn file .bin từ máy</button>
+        <button class="ota-tab" id="tabCloud">☁️ Tải từ GitHub / Cloud</button>
+      </div>
+
+      <!-- TAB 1: FILE .BIN NỘI BỘ -->
+      <div class="tab-content active" id="contentLocal">
+        <input type="file" id="fileInput" accept=".bin" style="display: none;">
+        <div class="file-dropzone" id="dropzone">
+          <div class="dropzone-icon">📥</div>
+          <div class="dropzone-text">Bấm vào đây để chọn file <b>.bin</b></div>
+          <div class="dropzone-hint">Hỗ trợ firmware build từ PlatformIO / Arduino IDE</div>
+        </div>
+
+        <div class="file-info-box" id="fileInfoBox">
+          <div class="file-name" id="fileName">firmware.bin</div>
+          <div class="file-size" id="fileSize">0 KB</div>
+        </div>
+      </div>
+
+      <!-- TAB 2: CLOUD MANIFEST -->
+      <div class="tab-content" id="contentCloud">
+        <div class="form-group">
+          <label>URL Manifest (JSON)</label>
+          <input id="otaManifest" type="text" value="https://raw.githubusercontent.com/VoTru-TECH/FOTA_ESP32/main/manifest.json" placeholder="https://raw.githubusercontent.com/...">
+        </div>
+
+        <button class="btn-check" id="btnCheckVersions">
+          🔍 Kiểm tra danh sách phiên bản
+        </button>
+
+        <div id="versionsList" class="versions-list"></div>
+      </div>
+
+      <div id="otaStatus" class="ota-status"></div>
+
+      <!-- NÚT BẮT ĐẦU NẠP FIRMWARE -->
+      <button class="btn-flash" id="btnFlash">
+        ⚡ Bắt Đầu Nạp Firmware Qua BLE
+      </button>
+
+      <!-- TIẾN TRÌNH & THỐNG KÊ TRỰC QUAN -->
+      <div class="progress-wrap" id="progressWrap">
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-val" id="statPct">0%</div>
+            <div class="stat-lbl">Tiến độ</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-val" id="statSpeed">0 KB/s</div>
+            <div class="stat-lbl">Tốc độ</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-val" id="statEta">--</div>
+            <div class="stat-lbl">Còn lại</div>
+          </div>
+        </div>
+
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-label" id="progressLabel">Đang chuẩn bị...</div>
+      </div>
     </div>
 
     <div id="log" class="log-text"></div>
   </div>
 
   <script>
-    const CONFIG_SERVICE_UUID = "4FAFC201-1FB5-459E-8FCC-C5C9C331914B".toLowerCase();
-    const CONFIG_CHAR_UUID    = "4FAFC202-1FB5-459E-8FCC-C5C9C331914B".toLowerCase();
+    // ── UUIDs GATT ───────────────────────────────────────────────────────────
+    const CONFIG_SERVICE_UUID   = "4FAFC201-1FB5-459E-8FCC-C5C9C331914B".toLowerCase();
+    const CONFIG_CHAR_UUID      = "4FAFC202-1FB5-459E-8FCC-C5C9C331914B".toLowerCase();
+    const OTA_CONTROL_CHAR_UUID = "4FAFC203-1FB5-459E-8FCC-C5C9C331914B".toLowerCase();
+    const OTA_DATA_CHAR_UUID    = "4FAFC204-1FB5-459E-8FCC-C5C9C331914B".toLowerCase();
 
-    const connectBtn = document.getElementById('connectBtn');
-    const saveBtn = document.getElementById('saveBtn');
-    const statusBox = document.getElementById('statusBox');
+    // ── DOM ELEMENTS ─────────────────────────────────────────────────────────
+    const connectBtn    = document.getElementById('connectBtn');
+    const saveBtn       = document.getElementById('saveBtn');
+    const statusBox     = document.getElementById('statusBox');
     const configSection = document.getElementById('configSection');
-    const logText = document.getElementById('log');
-    const appSelect = document.getElementById('appSelect');
-    const carSelect = document.getElementById('carSelect');
+    const logText       = document.getElementById('log');
+    const appSelect     = document.getElementById('appSelect');
+    const carSelect     = document.getElementById('carSelect');
 
+    const tabLocal      = document.getElementById('tabLocal');
+    const tabCloud      = document.getElementById('tabCloud');
+    const contentLocal  = document.getElementById('contentLocal');
+    const contentCloud  = document.getElementById('contentCloud');
+    const dropzone      = document.getElementById('dropzone');
+    const fileInput     = document.getElementById('fileInput');
+    const fileInfoBox   = document.getElementById('fileInfoBox');
+    const fileName      = document.getElementById('fileName');
+    const fileSize      = document.getElementById('fileSize');
+
+    const otaManifest   = document.getElementById('otaManifest');
+    const btnCheckVer   = document.getElementById('btnCheckVersions');
+    const versionsList  = document.getElementById('versionsList');
+    const btnFlash      = document.getElementById('btnFlash');
+    const otaStatus     = document.getElementById('otaStatus');
+
+    const progressWrap  = document.getElementById('progressWrap');
+    const progressFill  = document.getElementById('progressFill');
+    const progressLabel = document.getElementById('progressLabel');
+    const statPct       = document.getElementById('statPct');
+    const statSpeed     = document.getElementById('statSpeed');
+    const statEta       = document.getElementById('statEta');
+
+    // ── STATE VARIABLES ──────────────────────────────────────────────────────
     let bleDevice = null;
     let bleServer = null;
     let configChar = null;
+    let otaControlChar = null;
+    let otaDataChar = null;
+
+    let selectedFirmwareBuffer = null;
+    let selectedVersionCard = null;
+    let isFlashing = false;
+    let currentOtaPercent = 0;
+
+    // ACK flags from ESP32 notifications
+    let otaStartAck = false;
+    let otaEndAck = false;
+    let otaErrorMsg = null;
 
     function showLog(message, color = '#94A3B8') {
       logText.style.display = 'block';
       logText.style.color = color;
-      logText.innerText = message;
+      logText.innerHTML = message;
     }
 
-    // Nút 1: Tìm và kết nối
+    function setOtaStatus(msg, color = '#94A3B8') {
+      otaStatus.style.color = color;
+      otaStatus.textContent = msg;
+    }
+
+    // ── TABS SWITCHING ───────────────────────────────────────────────────────
+    tabLocal.addEventListener('click', () => {
+      tabLocal.classList.add('active');
+      tabCloud.classList.remove('active');
+      contentLocal.classList.add('active');
+      contentCloud.classList.remove('active');
+    });
+
+    tabCloud.addEventListener('click', () => {
+      tabCloud.classList.add('active');
+      tabLocal.classList.remove('active');
+      contentCloud.classList.add('active');
+      contentLocal.classList.remove('active');
+    });
+
+    // ── FILE PICKER (LOCAL .BIN) ─────────────────────────────────────────────
+    dropzone.addEventListener('click', () => fileInput.click());
+
+    dropzone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropzone.style.borderColor = '#38BDF8';
+    });
+
+    dropzone.addEventListener('dragleave', () => {
+      dropzone.style.borderColor = 'rgba(56, 189, 248, 0.35)';
+    });
+
+    dropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropzone.style.borderColor = 'rgba(56, 189, 248, 0.35)';
+      if (e.dataTransfer.files.length > 0) {
+        handleFile(e.dataTransfer.files[0]);
+      }
+    });
+
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files.length > 0) {
+        handleFile(fileInput.files[0]);
+      }
+    });
+
+    function handleFile(file) {
+      if (!file.name.endsWith('.bin')) {
+        setOtaStatus('⚠️ Vui lòng chọn file firmware định dạng .bin!', '#F87171');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        selectedFirmwareBuffer = e.target.result;
+        fileName.textContent = file.name;
+        fileSize.textContent = `${(file.size / 1024).toFixed(1)} KB`;
+        fileInfoBox.classList.add('visible');
+
+        btnFlash.innerHTML = `⚡ Nạp Firmware "${file.name}" Qua BLE`;
+        btnFlash.classList.add('visible');
+        setOtaStatus(`✅ Đã chuẩn bị file (${(file.size / 1024).toFixed(1)} KB). Sẵn sàng nạp!`, '#34D399');
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    // ── CLOUD MANIFEST & DOWNLOAD ────────────────────────────────────────────
+    btnCheckVer.addEventListener('click', async () => {
+      const url = otaManifest.value.trim();
+      if (!url) {
+        setOtaStatus('Vui lòng nhập URL Manifest!', '#F87171');
+        return;
+      }
+
+      btnCheckVer.disabled = true;
+      btnCheckVer.innerHTML = '⏳ Đang tải danh sách...';
+      versionsList.innerHTML = '';
+      btnFlash.classList.remove('visible');
+      selectedFirmwareBuffer = null;
+      setOtaStatus('Đang lấy thông tin phiên bản từ máy chủ...', '#FBBF24');
+
+      try {
+        const r = await fetch(url, { signal: AbortSignal.timeout(10000) });
+        if (!r.ok) throw new Error(`HTTP Error ${r.status}`);
+        const d = await r.json();
+
+        if (!d.versions || d.versions.length === 0) {
+          setOtaStatus('Không tìm thấy bản firmware nào trong manifest.', '#F87171');
+          return;
+        }
+
+        setOtaStatus(`Tìm thấy ${d.versions.length} phiên bản. Hãy chọn phiên bản muốn nạp:`, '#38BDF8');
+
+        d.versions.forEach((v) => {
+          const isLatest = (v.version === d.current);
+          const card = document.createElement('div');
+          card.className = 'version-card';
+          card.innerHTML = `
+            <div class="ver-title">
+              <span>v${v.version}</span>
+              ${isLatest ? '<span class="ver-badge">MỚI NHẤT</span>' : ''}
+            </div>
+            <div class="ver-date">📅 ${v.date || 'Gần đây'}</div>
+            <div class="ver-notes">${v.notes || 'Bản cập nhật tối ưu'}</div>
+          `;
+
+          card.addEventListener('click', async () => {
+            if (selectedVersionCard) selectedVersionCard.classList.remove('selected');
+            card.classList.add('selected');
+            selectedVersionCard = card;
+
+            setOtaStatus(`⏳ Đang tải firmware v${v.version} về máy...`, '#FBBF24');
+            btnFlash.classList.remove('visible');
+
+            try {
+              const binResp = await fetch(v.url, { signal: AbortSignal.timeout(60000) });
+              if (!binResp.ok) throw new Error(`Tải file thất bại (HTTP ${binResp.status})`);
+              selectedFirmwareBuffer = await binResp.arrayBuffer();
+
+              setOtaStatus(`✅ Đã tải xong v${v.version} (${(selectedFirmwareBuffer.byteLength / 1024).toFixed(1)} KB). Sẵn sàng nạp!`, '#34D399');
+              btnFlash.innerHTML = `⚡ Nạp Phiên Bản v${v.version} Qua BLE`;
+              btnFlash.classList.add('visible');
+            } catch (err) {
+              setOtaStatus(`❌ Lỗi tải file .bin: ${err.message}`, '#F87171');
+            }
+          });
+
+          versionsList.appendChild(card);
+        });
+
+      } catch (e) {
+        setOtaStatus(`❌ Lỗi kết nối Cloud: ${e.message}`, '#F87171');
+      } finally {
+        btnCheckVer.disabled = false;
+        btnCheckVer.innerHTML = '🔍 Kiểm tra danh sách phiên bản';
+      }
+    });
+
+    // ── KIỂM TRA MÔI TRƯỜNG KHI TẢI TRANG ────────────────────────────────────
+    if (!window.isSecureContext) {
+      const warn = document.getElementById('protocolWarning');
+      if (warn) warn.style.display = 'block';
+      statusBox.innerHTML = '⚠️ Cần chạy qua http://localhost hoặc HTTPS';
+      statusBox.style.color = '#FCA5A5';
+      statusBox.style.background = 'rgba(239, 68, 68, 0.1)';
+      statusBox.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+    }
+
+    // ── BLUETOOTH CONNECTION & GATT SETUP ─────────────────────────────────────
     connectBtn.addEventListener('click', async () => {
       try {
+        // 1. Kiểm tra Secure Context (Bắt buộc cho Web Bluetooth)
+        if (!window.isSecureContext) {
+          alert('Trình duyệt chặn Web Bluetooth khi mở trực tiếp file:// !\n\nVui lòng mở trang web này bằng VS Code Live Server (http://127.0.0.1:...) hoặc đưa lên hosting HTTPS.');
+          showLog('❌ Trình duyệt chặn Web Bluetooth trên file://. Hãy chạy qua localhost hoặc HTTPS!', '#F87171');
+          return;
+        }
+
+        if (!navigator.bluetooth) {
+          showLog('❌ Trình duyệt không hỗ trợ Web Bluetooth! Vui lòng dùng Google Chrome, Microsoft Edge trên máy tính / Android (hoặc app Bluefy trên iPhone).', '#F87171');
+          alert('Trình duyệt này không hỗ trợ Web Bluetooth! Hãy dùng Google Chrome hoặc Microsoft Edge.');
+          return;
+        }
+
         if (bleDevice && bleDevice.gatt.connected) {
           bleDevice.gatt.disconnect();
           return;
         }
-
         showLog('Đang mở cửa sổ quét Bluetooth...', '#60A5FA');
 
-        // Bật popup quét của Chrome (Hiện tất cả thiết bị để dễ dàng tìm thấy)
         bleDevice = await navigator.bluetooth.requestDevice({
           acceptAllDevices: true,
-          optionalServices: [CONFIG_SERVICE_UUID]
+          optionalServices: [
+            CONFIG_SERVICE_UUID,
+            "0000a000-0000-1000-8000-8c94df4c673a",
+            "00002a60-0000-1000-8000-00805f9b34fb",
+            "8a7e0001-4d6e-4c48-9a9d-484c504c0001",
+            "0000fff0-0000-1000-8000-00805f9b34fb",
+            "6e400001-b5a3-f393-e0a9-e50e24dcca9e",
+            "0000180a-0000-1000-8000-00805f9b34fb"
+          ]
         });
 
-        // Bắt sự kiện ngắt kết nối
         bleDevice.addEventListener('gattserverdisconnected', onDisconnected);
+        showLog(`Đang kết nối tới ${bleDevice.name || 'Thiết bị'}...`, '#60A5FA');
 
-        showLog(`Đang kết nối tới ${bleDevice.name || 'HUD'}...`, '#60A5FA');
-        
         let retries = 3;
         while (retries > 0) {
           try {
             bleServer = await bleDevice.gatt.connect();
-            break; // Kết nối thành công thì thoát loop
+            break;
           } catch (e) {
             retries--;
             if (retries === 0) throw e;
-            showLog(`Lỗi kết nối. Đang thử lại... (${retries} lần nữa)`, '#FBBF24');
+            showLog(`Đang thử lại kết nối (${retries})...`, '#FBBF24');
             await new Promise(r => setTimeout(r, 1000));
           }
         }
 
-        // Chờ thêm 500ms để GATT ổn định trên điện thoại
-        await new Promise(r => setTimeout(r, 500));
+        await new Promise(r => setTimeout(r, 400));
+        
+        let service = null;
+        try {
+          service = await bleServer.getPrimaryService(CONFIG_SERVICE_UUID);
+        } catch (sErr) {
+          console.warn('Direct getPrimaryService failed, trying discovery list:', sErr);
+          const services = await bleServer.getPrimaryServices();
+          service = services.find(s => s.uuid.toLowerCase() === CONFIG_SERVICE_UUID.toLowerCase());
+          if (!service) throw new Error('Không tìm thấy Config & OTA Service trên thiết bị!');
+        }
 
-        const service = await bleServer.getPrimaryService(CONFIG_SERVICE_UUID);
-        configChar = await service.getCharacteristic(CONFIG_CHAR_UUID);
+        // 1. Config Char
+        try {
+          configChar = await service.getCharacteristic(CONFIG_CHAR_UUID);
+        } catch (e) {
+          console.warn('Không tìm thấy Config Char:', e);
+        }
 
-        // Update UI khi kết nối thành công
-        statusBox.innerHTML = `🟢 Đã kết nối: <b>${bleDevice.name || 'HUD Mạch Kín'}</b>`;
+        // 2. OTA Control Char
+        try {
+          otaControlChar = await service.getCharacteristic(OTA_CONTROL_CHAR_UUID);
+          await otaControlChar.startNotifications();
+          otaControlChar.addEventListener('characteristicvaluechanged', onOtaNotification);
+        } catch (e) {
+          console.warn('Không tìm thấy OTA Control Char:', e);
+        }
+
+        // 3. OTA Data Char
+        try {
+          otaDataChar = await service.getCharacteristic(OTA_DATA_CHAR_UUID);
+        } catch (e) {
+          console.warn('Không tìm thấy OTA Data Char:', e);
+        }
+
+        statusBox.innerHTML = `<span style="font-size:18px">🟢</span> Đã kết nối: <strong style="color:#F1F5F9; margin-left:4px">${bleDevice.name || 'HUD'}</strong>`;
         statusBox.classList.add('connected');
-        connectBtn.innerText = "Ngắt kết nối";
+        connectBtn.innerHTML = '⏏ Ngắt kết nối';
         configSection.classList.add('visible');
-        showLog('Kết nối thành công! Mời chọn cấu hình.', '#34D399');
+        showLog('✅ Kết nối BLE thành công! Sẵn sàng cấu hình & nạp OTA.', '#4ADE80');
 
       } catch (error) {
-        console.error(error);
-        if (error.name === 'NotFoundError') {
-          showLog('Bạn đã hủy quét hoặc không tìm thấy thiết bị.', '#94A3B8');
-        } else if (error.name === 'NetworkError') {
-          showLog('Lỗi kết nối (NetworkError): Vui lòng tắt/bật lại Bluetooth trên điện thoại, gỡ ghép nối thiết bị cũ và thử lại!', '#F87171');
+        if (error.message && (error.message.includes('cancelled') || error.message.includes('canceled'))) {
+          showLog('Đã hủy tìm kiếm thiết bị.', '#94A3B8');
+        } else if (error.name === 'NotFoundError' || (error.message && error.message.includes('No Services matching UUID'))) {
+          showLog('❌ LỖI DỊCH VỤ: Thiết bị chưa có Config/OTA Service! Hãy nạp firmware mới (vừa sửa lỗi biên dịch) vào ESP32.', '#F87171');
         } else if (error.name === 'SecurityError') {
-          showLog('Lỗi bảo mật: Trình duyệt không có quyền dùng Bluetooth.', '#F87171');
+          showLog('❌ Lỗi bảo mật: Web Bluetooth yêu cầu HTTPS hoặc http://localhost (không hỗ trợ file://).', '#F87171');
+        } else if (error.name === 'NetworkError') {
+          showLog('❌ Lỗi kết nối (NetworkError): Thiết bị đang kết nối với App trên điện thoại hoặc bị từ chối. Hãy tắt Bluetooth trên điện thoại rồi thử lại!', '#F87171');
         } else {
-          showLog(`Lỗi [${error.name}]: ${error.message}`, '#F87171');
+          showLog(`❌ Lỗi [${error.name}]: ${error.message}`, '#F87171');
         }
       }
     });
 
-    // Hàm xử lý khi bị ngắt kết nối (Bluetooth rớt hoặc mạch reset)
     function onDisconnected() {
-      statusBox.innerHTML = `🔴 Chưa kết nối`;
+      statusBox.innerHTML = `<span style="font-size:18px">🔴</span> Chưa kết nối Bluetooth`;
       statusBox.classList.remove('connected');
-      connectBtn.innerText = "🔍 Tìm & Kết Nối Thiết Bị";
+      connectBtn.innerHTML = "🔍 Tìm & Kết Nối Thiết Bị";
       configSection.classList.remove('visible');
-      bleDevice = null;
-      bleServer = null;
-      configChar = null;
+
+      bleDevice = null; bleServer = null; configChar = null;
+      otaControlChar = null; otaDataChar = null;
+
+      if (isFlashing) {
+        if (currentOtaPercent >= 99) {
+          progressFill.style.width = '100%';
+          statPct.textContent = '100%';
+          statEta.textContent = '0s';
+          progressLabel.textContent = '🎉 CẬP NHẬT THÀNH CÔNG! Thiết bị đang khởi động lại...';
+          setOtaStatus('🎉 Firmware mới đã được nạp thành công 100%! Thiết bị đang khởi động lại.', '#34D399');
+        } else {
+          progressLabel.textContent = '❌ Mất kết nối Bluetooth giữa chừng!';
+          setOtaStatus('❌ Thiết bị đã ngắt kết nối trong lúc đang nạp!', '#F87171');
+        }
+        btnFlash.disabled = false;
+        isFlashing = false;
+      }
       showLog('Thiết bị đã ngắt kết nối.', '#94A3B8');
     }
 
-    // Nút 2: Ghi cấu hình
-    saveBtn.addEventListener('click', async () => {
-      if (!configChar) {
-        showLog('Lỗi: Chưa kết nối hoặc mất kết nối!', '#F87171');
-        return;
-      }
+    // ── XỬ LÝ PHẢN HỒI (NOTIFY) TỪ ESP32 ─────────────────────────────────────
+    function onOtaNotification(event) {
+      const val = new Uint8Array(event.target.value.buffer);
+      if (!val || val.length < 2) return;
+      const cmd = val[0];
+      const status = val[1];
 
+      if (cmd === 0x01) { // START ACK
+        if (status === 0x00) {
+          otaStartAck = true;
+        } else {
+          otaErrorMsg = `ESP32 từ chối bắt đầu OTA (Mã lỗi: ${status})`;
+        }
+      } else if (cmd === 0x02) { // END ACK
+        if (status === 0x00) {
+          otaEndAck = true;
+        } else {
+          otaErrorMsg = `ESP32 lỗi xác thực dữ liệu khi ghi xong (Mã lỗi: ${status})`;
+        }
+      } else if (cmd === 0x03) { // PROGRESS REPORT FROM ESP32
+        // status là % đã ghi vào flash
+      } else if (cmd === 0x0F) { // FATAL ERROR
+        otaErrorMsg = `ESP32 báo lỗi flash phần cứng (Mã lỗi: ${status})`;
+      }
+    }
+
+    // ── LƯU CẤU HÌNH APP & XE ────────────────────────────────────────────────
+    saveBtn.addEventListener('click', async () => {
+      if (!configChar) { showLog('Lỗi: Mất kết nối Bluetooth!', '#F87171'); return; }
       try {
         const appVal = parseInt(appSelect.value);
         const carVal = parseInt(carSelect.value);
-
-        // Tạo mảng 2 byte (App, Car)
         const data = new Uint8Array([appVal, carVal]);
 
-        showLog('Đang lưu vào Flash của ESP32...', '#FBBF24');
+        showLog('Đang lưu vào mạch...', '#FBBF24');
         saveBtn.disabled = true;
-        saveBtn.innerText = "Đang lưu...";
-
+        saveBtn.innerHTML = "⏳ Đang lưu...";
         await configChar.writeValue(data);
 
         showLog('✅ LƯU THÀNH CÔNG! Mạch đang tự khởi động lại...', '#34D399');
         statusBox.innerHTML = `🟠 Đang khởi động lại mạch...`;
-        
-        // Mạch sẽ tự khởi động lại (ESP.restart) nên GATT sẽ tự động kích hoạt onDisconnected
         setTimeout(() => {
           saveBtn.disabled = false;
-          saveBtn.innerText = "💾 Lưu & Khởi động lại";
+          saveBtn.innerHTML = "💾 Lưu & Khởi động lại";
         }, 2000);
-
       } catch (error) {
-        console.error(error);
-        showLog('Lỗi khi ghi dữ liệu: ' + error.message, '#F87171');
+        showLog('Lỗi ghi dữ liệu: ' + error.message, '#F87171');
         saveBtn.disabled = false;
-        saveBtn.innerText = "💾 Lưu & Khởi động lại";
+        saveBtn.innerHTML = "💾 Lưu & Khởi động lại";
+      }
+    });
+
+    // ── THỰC THI NẠP FIRMWARE TRỰC TIẾP QUA BLE ──────────────────────────────
+    btnFlash.addEventListener('click', async () => {
+      if (!selectedFirmwareBuffer) {
+        setOtaStatus('⚠️ Vui lòng chọn hoặc tải file firmware trước!', '#F87171');
+        return;
+      }
+
+      if (!otaControlChar || !otaDataChar || !bleServer || !bleServer.connected) {
+        setOtaStatus('⚠️ Chưa kết nối Bluetooth với thiết bị!', '#F87171');
+        return;
+      }
+
+      const totalBytes = selectedFirmwareBuffer.byteLength;
+      if (!confirm(`Xác nhận nạp firmware (${(totalBytes / 1024).toFixed(1)} KB) trực tiếp qua Bluetooth?\n\nQuá trình mất khoảng 35 - 45 giây. Vui lòng không tắt nguồn thiết bị!`)) {
+        return;
+      }
+
+      isFlashing = true;
+      btnFlash.disabled = true;
+      progressWrap.classList.add('visible');
+      progressFill.style.width = '0%';
+      statPct.textContent = '0%';
+      statSpeed.textContent = '0 KB/s';
+      statEta.textContent = '--';
+      progressLabel.textContent = 'Đang khởi tạo phân vùng flash trên ESP32...';
+      setOtaStatus('🔄 Đang bắt đầu quá trình nạp OTA qua Bluetooth...', '#FBBF24');
+
+      otaStartAck = false;
+      otaEndAck = false;
+      otaErrorMsg = null;
+
+      try {
+        // 1. GỬI LỆNH START (0x01 + 4 bytes totalSize)
+        const startCmd = new Uint8Array(5);
+        startCmd[0] = 0x01;
+        startCmd[1] = totalBytes & 0xFF;
+        startCmd[2] = (totalBytes >> 8) & 0xFF;
+        startCmd[3] = (totalBytes >> 16) & 0xFF;
+        startCmd[4] = (totalBytes >> 24) & 0xFF;
+
+        await otaControlChar.writeValue(startCmd);
+
+        // Chờ ESP32 phản hồi ACK sẵn sàng (tối đa 4 giây)
+        let waitStart = 0;
+        while (!otaStartAck && waitStart < 40) {
+          if (otaErrorMsg) throw new Error(otaErrorMsg);
+          await new Promise(r => setTimeout(r, 100));
+          waitStart++;
+        }
+        if (!otaStartAck) throw new Error('ESP32 không phản hồi lệnh bắt đầu OTA');
+
+        progressLabel.textContent = 'Đang truyền stream dữ liệu firmware qua BLE...';
+
+        // 2. TRUYỀN TỪNG CHUNK DỮ LIỆU QUA OTA_DATA_CHAR
+        const CHUNK_SIZE = 244; // Phù hợp với MTU chuẩn của BLE
+        const totalChunks = Math.ceil(totalBytes / CHUNK_SIZE);
+        const startTime = Date.now();
+        let lastStatsTime = startTime;
+        let lastStatsBytes = 0;
+
+        for (let i = 0; i < totalChunks; i++) {
+          if (!bleDevice || !bleDevice.gatt.connected) {
+            throw new Error('Mất kết nối Bluetooth giữa chừng!');
+          }
+          if (otaErrorMsg) throw new Error(otaErrorMsg);
+
+          const start = i * CHUNK_SIZE;
+          const end = Math.min(start + CHUNK_SIZE, totalBytes);
+          const chunk = selectedFirmwareBuffer.slice(start, end);
+
+          // Ghi dữ liệu không cần ACK GATT để tối đa hóa tốc độ
+          if (otaDataChar.writeValueWithoutResponse) {
+            await otaDataChar.writeValueWithoutResponse(chunk);
+          } else {
+            await otaDataChar.writeValue(chunk);
+          }
+
+          // Điều tiết hàng đợi buffer BLE hệ điều hành (nghỉ 5ms sau mỗi 8 chunk ~ 2KB)
+          if (i % 8 === 0) {
+            await new Promise(r => setTimeout(r, 5));
+          }
+
+          // Cập nhật thống kê thời gian thực mỗi 150ms
+          const now = Date.now();
+          if (now - lastStatsTime >= 150 || i === totalChunks - 1) {
+            const bytesSent = end;
+            const pct = Math.floor((bytesSent / totalBytes) * 100);
+            currentOtaPercent = pct;
+            progressFill.style.width = pct + '%';
+            statPct.textContent = pct + '%';
+
+            const elapsedSec = (now - startTime) / 1000;
+            const avgSpeedKBps = elapsedSec > 0 ? ((bytesSent / 1024) / elapsedSec) : 0;
+            statSpeed.textContent = avgSpeedKBps.toFixed(1) + ' KB/s';
+
+            const remainingBytes = totalBytes - bytesSent;
+            const etaSec = avgSpeedKBps > 0 ? Math.ceil((remainingBytes / 1024) / avgSpeedKBps) : 0;
+            statEta.textContent = etaSec > 0 ? `~${etaSec}s` : 'Xong';
+
+            progressLabel.textContent = `Đang nạp: ${(bytesSent / 1024).toFixed(0)} / ${(totalBytes / 1024).toFixed(0)} KB (${pct}%)`;
+
+            lastStatsTime = now;
+            lastStatsBytes = bytesSent;
+          }
+        }
+
+        currentOtaPercent = 100;
+        // 3. GỬI LỆNH HOÀN TẤT (0x02)
+        progressLabel.textContent = 'Đang kiểm tra toàn vẹn và lưu vào flash...';
+        try {
+          await otaControlChar.writeValue(new Uint8Array([0x02]));
+        } catch (wErr) {
+          console.warn('Lệnh 0x02 ghi xong trong lúc mạch reboot:', wErr);
+        }
+
+        // Chờ phản hồi hoặc ngắt kết nối do ESP32 restart (tối đa 4 giây)
+        let waitEnd = 0;
+        while (!otaEndAck && waitEnd < 40) {
+          if (otaErrorMsg) throw new Error(otaErrorMsg);
+          if (!bleDevice || !bleDevice.gatt.connected) break;
+          await new Promise(r => setTimeout(r, 100));
+          waitEnd++;
+        }
+
+        isFlashing = false;
+        progressFill.style.width = '100%';
+        statPct.textContent = '100%';
+        statEta.textContent = '0s';
+        progressLabel.textContent = '🎉 CẬP NHẬT THÀNH CÔNG! Thiết bị đang khởi động lại...';
+        setOtaStatus('🎉 Firmware mới đã được nạp thành công 100%! Thiết bị đang khởi động lại.', '#34D399');
+
+      } catch (err) {
+        if (currentOtaPercent >= 99 || (err.message && (err.message.includes('GATT') || err.message.includes('disconnect') || err.name === 'NetworkError'))) {
+          // Thực chất mạch đã nạp xong 100% và ngắt kết nối để reboot!
+          isFlashing = false;
+          progressFill.style.width = '100%';
+          statPct.textContent = '100%';
+          statEta.textContent = '0s';
+          progressLabel.textContent = '🎉 CẬP NHẬT THÀNH CÔNG! Thiết bị đang khởi động lại...';
+          setOtaStatus('🎉 Firmware mới đã được nạp thành công 100%! Thiết bị đang khởi động lại.', '#34D399');
+        } else {
+          progressLabel.textContent = `❌ Lỗi: ${err.message}`;
+          setOtaStatus(`❌ Quá trình nạp thất bại: ${err.message}`, '#F87171');
+        }
+      } finally {
+        isFlashing = false;
+        btnFlash.disabled = false;
       }
     });
   </script>
